@@ -21,13 +21,18 @@
 
       <div id="list" class="cards"></div>
 
+      <script src="configuration.js"></script>
       <script>
-        let host = "http://localhost:8080";
+        let host = getHost();
         let quizzes = [];
         displayTheQuizzes();
   
         async function getAll() {
-          let response = await fetch(host + "/quizzes");
+          let response = await fetch(host + "/quizzes", {
+          headers: {
+            "Authorization": `Bearer ${configuration.token()}`
+          }
+        });
           let result = await response.json();
           return result;
         }
@@ -59,6 +64,5 @@
           }
         }
         </script>
-        <script src="configuration.js"></script>
   </body>
 </html>

@@ -27,8 +27,9 @@
       </div>
     </div>
 
+    <script src="configuration.js"></script>
     <script>
-      let host = "http://localhost:8080";
+      let host = getHost();
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get("id");
       let quiz = null;
@@ -42,9 +43,23 @@
       startTheQuiz();
 
       async function startTheQuiz() {
-        let response = await fetch(host + "/quizzes/" + id);
-        quiz = await response.json();
-        await displayTheQuestion(0);
+        let request = {
+          headers: {
+            "Authorization": `Bearer ${configuration.token()}`
+          }
+        };
+
+      try {
+        let response = await fetch(host + "/quizzes/" + id, request);
+        if (response.ok) {
+          quiz = await response.json();
+          await displayTheQuestion(0);
+        } else {
+          console.error(`Failed to start the quiz: ${response.status} - ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error("An error occurred while starting the quiz:", error);
+      }
       }
 
       async function goNext() {
@@ -134,6 +149,5 @@
         item.appendChild(div);
       }
     </script>
-    <script src="configuration.js"></script>
   </body>
 </html>
